@@ -1,7 +1,7 @@
 const configuration = {
     PORT : 3000,
     DDBB : {
-        NAME : 'BddConDatos',
+        NAME : 'delilah-resto',
         USER : 'root',
         PASS : '',
         PORT : '3306',
