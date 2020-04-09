@@ -1,4 +1,4 @@
-const config = {
+const configuration = {
     PORT : 3000,
     DDBB : {
         NAME : 'BddConDatos',
@@ -9,4 +9,4 @@ const config = {
     }
 }
 
-module.exports = {config}
+module.exports = {configuration}
