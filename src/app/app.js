@@ -12,9 +12,22 @@ app.use(bodyParser.json())
 app.use('/api',router)
 
 
-
 // iniciamos nuestro servidor
-sequelize
+async function start(){
+  try{
+    await sequelize.authenticate()
+    console.log('La conexión a la base de datos se estableció exitosamente')
+    app.listen(configuration.PORT,()=>{
+      console.log(`El servidor está escuchando en el puerto ${configuration.PORT}`)
+    })
+  }catch(err){
+    console.error('No se pudo conectar a la base de datos: ',err)
+  }
+}
+start()
+
+
+/* sequelize
     .authenticate()
     .then(() => {
         console.log('Database connection has been established successfully.')
@@ -23,6 +36,6 @@ sequelize
         })
         
     })
-    .catch(err => console.error('Unable to connect to the database:', err))
+    .catch(err => console.error('Unable to connect to the database:', err)) */
 
 
