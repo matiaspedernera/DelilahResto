@@ -6,6 +6,9 @@ const configuration = {
         PASS : '',
         PORT : '3306',
         HOST : '127.0.0.1'
+    },
+    JWT : {
+        PRIVATE_KEY : 'secretoso'
     }
 }
 
