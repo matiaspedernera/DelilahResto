@@ -1,6 +1,13 @@
 const config = require('../config/config').configuration
 const jwt = require('jsonwebtoken')
 
+function getIdfromUser(req){
+    const token = req.headers.authorization.split(' ')[1]
+    const decodified = jwt.verify(token,config.JWT.PRIVATE_KEY)
+    const userId = decodified.id
+    return userId
+}
+
 const autenticarUsuario = (req,res,next)=>{
     try{
         const token = req.headers.authorization.split(' ')[1]
@@ -32,4 +39,4 @@ const autenticarRol = (req,res,next)=>{
     }
 }
 
-module.exports = {autenticarUsuario,autenticarRol}
+module.exports = {autenticarUsuario,autenticarRol,getIdfromUser}

@@ -1,7 +1,11 @@
 const router = require('express').Router()
 const productController = require('../controllers/productsController')
+const authUser = require('../middlewares/authMiddleware').autenticarUsuario
+const authRole = require('../middlewares/authMiddleware').autenticarRol
 
 router
+
+  .use(authUser)
    
   .get('/', async (req,res) =>{
     try{
@@ -24,7 +28,7 @@ router
     }
   })
 
-  .post('/', async (req, res) =>{
+  .post('/',authRole, async (req, res) =>{
     try{
       await productController.create(req.body)
       res.json('Ok')
@@ -34,7 +38,7 @@ router
     }
   })
 
-  .put('/:id', async (req, res) =>{
+  .put('/:id',authRole, async (req, res) =>{
     id = req.params.id
     try{
       await productController.update(id,req.body)
@@ -44,7 +48,7 @@ router
     }
   })
 
-  .delete('/:id', async (req, res) =>{
+  .delete('/:id',authRole, async (req, res) =>{
     const id = req.params.id
     try{
       await productController.delete(id)
