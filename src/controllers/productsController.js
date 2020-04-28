@@ -3,13 +3,17 @@ const sequelize = require('../../bdd/bdd')
 
 class productController {
     static showAll(){
-        const product = sequelize.query('SELECT * FROM product',
+        const product = sequelize.query(
+            `SELECT id 'ID', product_name 'Nombre del producto', price 'Precio' 
+            FROM product`,
         {type : sequelize.QueryTypes.SELECT})
         return product
     }
 
     static showOne(id){
-        const product = sequelize.query('SELECT * FROM product WHERE id = ?',
+        const product = sequelize.query(
+            `SELECT id 'ID', product_name 'Nombre del producto', price 'Precio' 
+            FROM product WHERE id = ?`,
         {replacements : [id],type : sequelize.QueryTypes.SELECT})
         return product
     }
@@ -25,7 +29,8 @@ class productController {
 
     static create({product_name,price}){
         const product = new Product(product_name,price)
-        sequelize.query('INSERT INTO product(id,product_name,price) VALUES(null,?,?)',
+        sequelize.query(`INSERT INTO product(id,product_name,price) 
+                        VALUES(null,?,?)`,
         {replacements : [`${product.product_name}`,product.price]})
     }
 

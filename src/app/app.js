@@ -27,15 +27,4 @@ async function start(){
 start()
 
 
-/* sequelize
-    .authenticate()
-    .then(() => {
-        console.log('Database connection has been established successfully.')
-        app.listen(configuration.PORT, () => {
-          console.log(`Server is running at port ${configuration.PORT}`)
-        })
-        
-    })
-    .catch(err => console.error('Unable to connect to the database:', err)) */
-
 

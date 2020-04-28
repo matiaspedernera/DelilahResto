@@ -1,10 +1,27 @@
 const router = require('express').Router()
 const orderController = require('../controllers/ordersController')
 const getUser = require('../middlewares/authMiddleware').getIdfromUser
+const authUser = require('../middlewares/authMiddleware').autenticarUsuario
+const authRole = require('../middlewares/authMiddleware').autenticarRol
 
 router
+    .use(authUser)
 
-    .get('/', async (req,res) =>{
+    .post('/',async(req,res)=>{
+        try{
+            const userId = await getUser(req)
+            await orderController.createOrder(userId,req.body)
+            res
+            .status(201)
+            .json({message: 'El pedido ha sido creado'})
+        }catch(error){
+            res
+            .status(500)
+            .json(({Error : 'Algo salió mal'}))
+          }
+    })
+
+    .get('/',authRole, async (req,res) =>{
         try{
         const orders = await orderController.showAll()
         const details = await orderController.showAllDetails()
@@ -15,40 +32,77 @@ router
             .json(({Error : 'Algo salió mal'}))
         }
     })
-
-    .post('/',async(req,res)=>{
-        const userId = await getUser(req)
-        const order = await orderController.createOrder(userId,req.body)
-        res.json(order)
-    })
-
-//PRUEBA, DEVUELVE PRODUCTOS PASADOS POR BODY EN UN ARRAY    
-/*     .post('/',async(req,res)=>{
-        const products = await orderController.showProducts(req.body)
-        res.json(products)
-    }) */
+  
     
-    .get('/details',async(req,res)=>{
-        const details = await orderController.showAllDetails()
-        res.json(details)
+    .get('/details',authRole,async(req,res)=>{
+        try{
+            const details = await orderController.showAllDetails()
+            res
+            .status(200)
+            .json(details)
+
+        }catch(error){
+            res
+            .status(500)
+            .json(({Error : 'Algo salió mal'}))
+          }
     })
 
 
-    .get('/:id',async(req,res)=>{
+    .get('/:id',authRole,async(req,res)=>{
         const id = req.params.id
+        if(isNaN(id)){
+            return res
+            .status(400)
+            .json({error: 'Id debe ser un numero'})
+          }
         try{
           const order = await orderController.showOne(id)
+          if(!order.length){
+            return res
+              .status(404)
+              .json({message: 'No existe el pedido buscado'})
+          }
           const detail = await orderController.showDetailsOneOrder(id)
           res.json({
               order:order[0],
               detail:detail
           })
-        } catch (error) {
-          res.status(404)
-            .json({Error: 'Pedido no encontrado'})
-        }        
+        }catch(error){
+            res
+            .status(500)
+            .json(({Error : 'Algo salió mal'}))
+          }        
     })
 
+    .put('/:id/estado',authRole,async(req,res)=>{
+        try{
+            const orderId = req.params.id
+            await orderController.updateState(orderId,req.body)
+            res.json({message: 'Se ha actualizado el estado del pedido con id '+ orderId})
+
+        }catch(error){
+            res
+            .status(500)
+            .json(({Error : 'Algo salió mal'}))
+          }
+    })
     
+    .delete('/:id',authRole,async(req,res)=>{
+        const id = req.params.id
+        if(isNaN(id)){
+            return res
+            .status(400)
+            .json({error: 'Id debe ser un numero'})
+          }
+        try{
+          await orderController.delete(id)
+          res.json({ message: 'Se eliminó la orden con id ' + id})
+        }catch(error){
+            res
+            .status(500)
+            .json(({Error : 'Algo salió mal'}))
+          }      
+    })
     
 module.exports = router

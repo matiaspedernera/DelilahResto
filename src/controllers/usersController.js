@@ -7,7 +7,8 @@ class userController{
     static showAll(){
         const users = 
         sequelize.query(
-            `SELECT u.id,u.username,u.fullname,u.mail,u.phone,u.user_type_id,ut.user_type 
+            `SELECT u.id 'ID',u.username 'Nombre de usuario',u.fullname 'Nombre Completo',
+            u.mail 'e-mail',u.phone 'Telefono',u.address 'Direccion',u.user_type_id 'Tipo de usuario',ut.user_type 'Rol'
             FROM user u 
             JOIN user_type ut 
             ON u.user_type_id = ut.id`,
@@ -16,7 +17,13 @@ class userController{
     }
 
     static showOne(id){
-        const user = sequelize.query('SELECT * FROM user WHERE id = ?',
+        const user = sequelize.query(
+            `SELECT u.id 'ID',u.username 'Nombre de usuario',u.fullname 'Nombre Completo',
+            u.mail 'e-mail',u.phone 'Telefono',u.address 'Direccion',u.user_type_id 'Tipo de usuario',ut.user_type 'Rol'
+            FROM user u 
+            JOIN user_type ut 
+            ON u.user_type_id = ut.id
+            WHERE u.id = ?`,
         {replacements : [id],type : sequelize.QueryTypes.SELECT})
         return user
     }    
@@ -47,10 +54,11 @@ class userController{
 
     static async login({username,password}){
         async function findUser(){
-            const users = await sequelize.query(`SELECT id, username, fullname, mail,user_type_id
-                                FROM user
-                                WHERE username = ?
-                                AND password = ?`,
+            const users = await sequelize.query(
+                `SELECT id, username, fullname, mail,user_type_id
+                FROM user
+                WHERE username = ?
+                AND password = ?`,
             {replacements : [username,password],type : sequelize.QueryTypes.SELECT})
             return users
         }
@@ -58,14 +66,24 @@ class userController{
             const usersFound = await findUser()
             if(usersFound.length){
                 const token = jwt.sign(usersFound[0],config.JWT.PRIVATE_KEY)
-                console.log('Hay resultados')
                 return token
             }else{
-                console.log('No hay resultados')
                 return null
             }
         }
         return giveToken()
+    }
+
+    static async getInfo(user_id){
+        const myInfo = await sequelize.query(
+            `SELECT u.id 'ID',u.username 'Nombre de usuario',u.fullname 'Nombre Completo',
+            u.mail 'e-mail',u.phone 'Telefono',u.address 'Direccion',u.user_type_id 'Tipo de usuario',ut.user_type 'Rol'
+            FROM user u 
+            JOIN user_type ut 
+            ON u.user_type_id = ut.id
+            WHERE u.id = ?`,
+            {replacements: [user_id],type : sequelize.QueryTypes.SELECT})
+        return myInfo
     }
 }
 

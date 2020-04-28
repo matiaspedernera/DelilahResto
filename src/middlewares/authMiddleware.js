@@ -17,7 +17,9 @@ const autenticarUsuario = (req,res,next)=>{
             return next()
         }
     }catch(err){
-        res.json({error:'Error al validar usuario'})
+        res
+        .status(401)
+        .json({error:'Error al validar usuario, debe loguearse antes'})
     }
 }
 
@@ -30,12 +32,12 @@ const autenticarRol = (req,res,next)=>{
         }else{
             res
             .status(403)
-            .send({ error: 'Unauthorized.', message: 'Access denied.' })
+            .send({ error: 'No posee autorización.', message: 'Acceso Denegado.' })
         }
     }catch(error){
         res
         .status(401)
-        .send({ error: 'Unauthorized.', message: 'Token verification failed.' })        
+        .send({ error: 'No posee autorización.', message: 'Verificación de Token fallida.' })        
     }
 }
 

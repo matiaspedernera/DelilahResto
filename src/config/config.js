@@ -8,7 +8,7 @@ const configuration = {
         HOST : '127.0.0.1'
     },
     JWT : {
-        PRIVATE_KEY : 'secretoso'
+        PRIVATE_KEY : 'secreto'
     }
 }
 
